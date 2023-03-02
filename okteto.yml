@@ -18,14 +18,14 @@ deploy:
       command: |
         cd worker
         sam build
-        sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-prefix "${OKTETO_NAMESPACE}" --stack-name "${OKTETO_NAMESPACE}-okteto-lambda" --parameter-overrides ParameterKey=MongoDBUsername,ParameterValue=${MONGODB_USERNAME} ParameterKey=MongoDBPassword,ParameterValue=${MONGODB_PASSWORD} ParameterKey=MongoDBDatabase,ParameterValue=${MONGODB_DATABASE} ParameterKey=MongoDBHost,ParameterValue=${MONGODB_HOST}
+        sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-prefix "${OKTETO_NAMESPACE}" --stack-name "${OKTETO_NAMESPACE}-okteto-lambda" --parameter-overrides ParameterKey=MongoDBUsername,ParameterValue=${MONGODB_USERNAME} ParameterKey=MongoDBPassword,ParameterValue=${MONGODB_PASSWORD} ParameterKey=MongoDBDatabase,ParameterValue=${OKTETO_NAMESPACE} ParameterKey=MongoDBHost,ParameterValue=${MONGODB_HOST}
         aws cloudformation describe-stacks --region us-east-1 --stack-name ${OKTETO_NAMESPACE}-okteto-lambda --query "Stacks[0].Outputs[0].OutputValue" --output text > lambda-url
 
     - name: deploy vote service
       command: helm upgrade --install vote vote/chart --set image=${OKTETO_BUILD_VOTE_IMAGE} --set worker=`cat worker/lambda-url`
        
     - name: deploy result service
-      command: helm upgrade --install result result/chart --set image=${OKTETO_BUILD_RESULT_IMAGE} --set mongodb.username=${MONGODB_USERNAME} --set mongodb.password=${MONGODB_PASSWORD} --set mongodb.database=${MONGODB_DATABASE} --set mongodb.host=${MONGODB_HOST}
+      command: helm upgrade --install result result/chart --set image=${OKTETO_BUILD_RESULT_IMAGE} --set mongodb.username=${MONGODB_USERNAME} --set mongodb.password=${MONGODB_PASSWORD} --set mongodb.database=${OKTETO_NAMESPACE} --set mongodb.host=${MONGODB_HOST}
 
 destroy:
   image: okteto/pipeline-runner:1.0.0-sam
