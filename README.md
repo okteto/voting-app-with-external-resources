@@ -24,7 +24,6 @@ This is an example of how to configure and deploy a development environment that
 
     - MONGODB_USERNAME: Your MongoDB Atlas username
     - MONGODB_PASSWORD: Your MongoDB Atlas username
-    - MONGODB_DATABASE: The name of your MongoDB Atlas cluster
     - MONGODB_HOST: The URL of your MongoDB Atlas cluster
     - AWS_ACCESS_KEY_ID: The Acces Key ID of your IAM user.
     - AWS_SECRET_ACCESS_KEY: The Secret Acces Key of your IAM user.
