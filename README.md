@@ -15,11 +15,12 @@ This is an example of how to configure and deploy a development environment that
 ## Run the demo application in Okteto
 
 ### Prequisites:
+1. Okteto CLI 2.13 or newer
 1. An AWS account
-2. A [MongoDB Atlas](https://www.mongodb.com/docs/atlas/getting-started/) account
-3. [Deploy a free cluster](https://www.mongodb.com/docs/atlas/tutorial/deploy-free-tier-cluster/) in your MongoDB Atlas account
-4. Create a set of IAM keys for your AWS account
-5. Create the following Okteto secrets:
+1. A [MongoDB Atlas](https://www.mongodb.com/docs/atlas/getting-started/) account
+1. [Deploy a free cluster](https://www.mongodb.com/docs/atlas/tutorial/deploy-free-tier-cluster/) in your MongoDB Atlas account
+1. Create a set of IAM keys for your AWS account
+1. Create the following Okteto secrets:
 
     - MONGODB_USERNAME: Your MongoDB Atlas username
     - MONGODB_PASSWORD: Your MongoDB Atlas username

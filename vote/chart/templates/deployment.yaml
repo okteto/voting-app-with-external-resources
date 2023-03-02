@@ -22,4 +22,4 @@ spec:
           name: vote
         env:
         - name: FUNCTION_URL
-          value: {{ .Values.function.url }}
+          value: {{ .Values.worker }}
