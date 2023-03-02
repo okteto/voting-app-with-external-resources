@@ -1,0 +1,65 @@
+name: voting
+
+icon: https://github.com/okteto/microservices-demo/raw/main/vote-icon.png
+
+build:
+  result:
+    context: result
+    dockerfile: Dockerfile
+
+  vote:
+    context: vote
+    dockerfile: Dockerfile
+
+deploy:
+  image: okteto/pipeline-runner:1.0.0-sam
+  commands:
+    - name: deploy worker service
+      command: |
+        cd worker
+        sam build
+        sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-prefix "${OKTETO_NAMESPACE}" --stack-name "${OKTETO_NAMESPACE}-okteto-lambda" --parameter-overrides ParameterKey=MongoDBUsername,ParameterValue=${MONGODB_USERNAME} ParameterKey=MongoDBPassword,ParameterValue=${MONGODB_PASSWORD} ParameterKey=MongoDBDatabase,ParameterValue=${MONGODB_DATABASE} ParameterKey=MongoDBHost,ParameterValue=${MONGODB_HOST}
+        aws cloudformation describe-stacks --region us-east-1 --stack-name ${OKTETO_NAMESPACE}-okteto-lambda --query "Stacks[0].Outputs[0].OutputValue" --output text > lambda-url
+
+    - name: deploy vote service
+      command: helm upgrade --install vote vote/chart --set image=${OKTETO_BUILD_VOTE_IMAGE} --set worker=`cat worker/lambda-url`
+       
+    - name: deploy result service
+      command: helm upgrade --install result result/chart --set image=${OKTETO_BUILD_RESULT_IMAGE} --set mongodb.username=${MONGODB_USERNAME} --set mongodb.password=${MONGODB_PASSWORD} --set mongodb.database=${MONGODB_DATABASE} --set mongodb.host=${MONGODB_HOST}
+
+destroy:
+  image: okteto/pipeline-runner:1.0.0-sam
+  commands:
+    - name: destroy worker service
+      command: sam delete --no-prompts --stack-name "${OKTETO_NAMESPACE}-okteto-lambda" --region us-east-1
+
+external:
+  lambda:
+    icon: function
+    notes: docs/lambda.md
+    endpoints:
+    - name: function
+      url: https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions
+  atlas:
+    icon: database
+    notes: docs/atlas.md
+    endpoints:
+    - name: dashboard
+      url: https://cloud.mongodb.com/v2/623d0c65c937984f4e235a41#/clusters
+      
+dev:
+  vote:
+    command: mvn spring-boot:run
+    sync:
+      - ./vote:/app
+    forward:
+    - 5005:5005
+    persistentVolume:
+      enabled: false
+
+  result:
+    command: nodemon server.js
+    sync:
+      - ./result:/app
+    persistentVolume:
+      enabled: false
