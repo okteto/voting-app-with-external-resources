@@ -25,8 +25,9 @@ This is an example of how to configure and deploy a development environment that
     - MONGODB_USERNAME: Your MongoDB Atlas username
     - MONGODB_PASSWORD: Your MongoDB Atlas username
     - MONGODB_HOST: The URL of your MongoDB Atlas cluster
-    - AWS_ACCESS_KEY_ID: The Acces Key ID of your IAM user.
-    - AWS_SECRET_ACCESS_KEY: The Secret Acces Key of your IAM user.
+    - MONGODB_WEBURL: The Web URL of your MongoDB Atlas cluster 
+    - AWS_ACCESS_KEY_ID: The Acces Key ID of your IAM user
+    - AWS_SECRET_ACCESS_KEY: The Secret Acces Key of your IAM user
 
 > If you are using Okteto Self-Hosted, you can configure your instance to use an AWS role instead of using an Acess Key and Secret Access Key.
 
