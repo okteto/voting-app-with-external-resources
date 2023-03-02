@@ -34,9 +34,9 @@ Once this is configured, anyone with access to your Okteto instance will be able
 
 
 ```
-$ git clone https://github.com/okteto/microservices-demo
-$ cd microservices-demo
-$ okteto login
+$ git clone https://github.com/okteto/voting-app-with-external-resources
+$ cd voting-app-with-external-resources
+$ okteto context use $OKTETO_URL
 $ okteto deploy
 ```
 
