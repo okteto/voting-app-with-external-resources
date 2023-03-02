@@ -20,6 +20,8 @@ deploy:
         sam build
         sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-prefix "${OKTETO_NAMESPACE}" --stack-name "${OKTETO_NAMESPACE}-okteto-lambda" --parameter-overrides ParameterKey=MongoDBUsername,ParameterValue=${MONGODB_USERNAME} ParameterKey=MongoDBPassword,ParameterValue=${MONGODB_PASSWORD} ParameterKey=MongoDBDatabase,ParameterValue=${OKTETO_NAMESPACE} ParameterKey=MongoDBHost,ParameterValue=${MONGODB_HOST}
         aws cloudformation describe-stacks --region us-east-1 --stack-name ${OKTETO_NAMESPACE}-okteto-lambda --query "Stacks[0].Outputs[0].OutputValue" --output text > lambda-url
+        echo "OKTETO_EXTERNAL_LAMBDA_ENDPOINTS_FUNCTION_URL=https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/applications/${OKTETO_NAMESPACE}-okteto-lambda" >> $OKTETO_ENV
+        echo "OKTETO_EXTERNAL_DATABASE_ENDPOINTS_DASHBOARD_URL=https://cloud.mongodb.com/v2/623d0c65c937984f4e235a41#/serverless/explorer/okteto-rb/${OKTETO_NAMESPACE}" >> $OKTETO_ENV
 
     - name: deploy vote service
       command: helm upgrade --install vote vote/chart --set image=${OKTETO_BUILD_VOTE_IMAGE} --set worker=`cat worker/lambda-url`
