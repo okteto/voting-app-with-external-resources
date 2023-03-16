@@ -16,15 +16,19 @@ deploy:
   commands:
     - name: deploy worker service
       command: |
+        set -e
         cd worker
         sam build
-        sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-prefix "${OKTETO_NAMESPACE}" --stack-name "${OKTETO_NAMESPACE}-okteto-lambda" --parameter-overrides ParameterKey=MongoDBUsername,ParameterValue=${MONGODB_USERNAME} ParameterKey=MongoDBPassword,ParameterValue=${MONGODB_PASSWORD} ParameterKey=MongoDBDatabase,ParameterValue=${OKTETO_NAMESPACE} ParameterKey=MongoDBHost,ParameterValue=${MONGODB_HOST}
-        aws cloudformation describe-stacks --region us-east-1 --stack-name ${OKTETO_NAMESPACE}-okteto-lambda --query "Stacks[0].Outputs[0].OutputValue" --output text > lambda-url
+        STACK_NAME="${OKTETO_NAMESPACE}-voting-texkhnclxd"
+        sam deploy --region us-east-1 --no-confirm-changeset --no-fail-on-empty-changeset --resolve-s3 "${OKTETO_NAMESPACE}-texkhnclxd" --stack-name ${STACK_NAME} --parameter-overrides ParameterKey=MongoDBUsername,ParameterValue=${MONGODB_USERNAME} ParameterKey=MongoDBPassword,ParameterValue=${MONGODB_PASSWORD} ParameterKey=MongoDBDatabase,ParameterValue=${OKTETO_NAMESPACE} ParameterKey=MongoDBHost,ParameterValue=${MONGODB_HOST} --capabilities CAPABILITY_IAM
+        aws cloudformation describe-stacks --region us-east-1 --stack-name ${STACK_NAME} --query "Stacks[0].Outputs[0].OutputValue" --output text > lambda-url
         echo "OKTETO_EXTERNAL_LAMBDA_ENDPOINTS_FUNCTION_URL=https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/applications/${OKTETO_NAMESPACE}-okteto-lambda" >> $OKTETO_ENV
         echo "OKTETO_EXTERNAL_ATLAS_ENDPOINTS_DASHBOARD_URL=${MONGODB_WEBURL}/${OKTETO_NAMESPACE}" >> $OKTETO_ENV
 
     - name: deploy vote service
-      command: helm upgrade --install vote vote/chart --set image=${OKTETO_BUILD_VOTE_IMAGE} --set worker=`cat worker/lambda-url`
+      command: |
+        LAMBDA_URL=$(cat worker/lambda-url)
+        helm upgrade --install vote vote/chart --set image=${OKTETO_BUILD_VOTE_IMAGE} --set worker=${LAMBDA_URL}
        
     - name: deploy result service
       command: helm upgrade --install result result/chart --set image=${OKTETO_BUILD_RESULT_IMAGE} --set mongodb.username=${MONGODB_USERNAME} --set mongodb.password=${MONGODB_PASSWORD} --set mongodb.database=${OKTETO_NAMESPACE} --set mongodb.host=${MONGODB_HOST}
@@ -33,7 +37,8 @@ destroy:
   image: okteto/pipeline-runner:1.0.0-sam
   commands:
     - name: destroy worker service
-      command: sam delete --no-prompts --stack-name "${OKTETO_NAMESPACE}-okteto-lambda" --region us-east-1
+      command: |
+        sam delete --no-prompts --stack-name "${OKTETO_NAMESPACE}-voting-texkhnclxd" --region us-east-1
 
 external:
   lambda:
