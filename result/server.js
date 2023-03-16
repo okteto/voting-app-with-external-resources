@@ -2,7 +2,6 @@ const {MongoClient} = require('mongodb');
 
 var mongoHost = process.env.MONGODB_HOST || 'mongodb-serverless.tussl.mongodb.net'
 var mongoUrl = `mongodb+srv://${process.env.MONGODB_USERNAME}:${encodeURIComponent(process.env.MONGODB_PASSWORD)}@${mongoHost}/${process.env.MONGODB_DATABASE}?retryWrites=true&w=majority`;
-console.log(mongoUrl);
 const client = new MongoClient(mongoUrl);
 const db = client.db(process.env.MONGODB_DATABASE);
 
