@@ -78,17 +78,7 @@ public class VoteController {
 
         Cookie cookie = new Cookie("voter_id", voter);
         response.addCookie(cookie);
-
-        String body = String.format("{\"voter\": \"%s\", \"vote\": \"%s\"}", voter, vote);
-        RestTemplate rest = new RestTemplate();
-
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-        Map<String, String> headersMap = new HashMap<String, String>();
-        headersMap.put("content-type", "application/json");
-        headers.setAll(headersMap);
-        HttpEntity<String> requestEntity = new HttpEntity<String>(body, headers);
-        rest.exchange(FUNCTION_URL, HttpMethod.POST, requestEntity, String.class);
-
+        postToFunction(voter, vote);
         return "index";
     }
 
@@ -98,8 +88,11 @@ public class VoteController {
         
         String vote = voteRequest.getVote();
         logger.info(String.format("vote received for '%s'!", vote));
+        postToFunction("api", vote);
+    }
 
-        String body = String.format("{\"voter\": \"%s\", \"vote\": \"%s\"}", "api", vote);
+    void postToFunction(String voter, String vote) {
+        String body = String.format("{\"voter\": \"%s\", \"vote\": \"%s\"}", voter, vote);
         RestTemplate rest = new RestTemplate();
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
