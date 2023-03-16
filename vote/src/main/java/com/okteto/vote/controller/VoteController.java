@@ -5,12 +5,15 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.thymeleaf.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.util.LinkedMultiValueMap;
@@ -21,7 +24,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import java.util.UUID;
+
 
 @Controller
 public class VoteController {
@@ -63,6 +68,7 @@ public class VoteController {
         model.addAttribute("optionA", v.getOptionA());
         model.addAttribute("optionB", v.getOptionB());
         model.addAttribute("hostname", v.getHostname());
+        
         // We pass the vote received in the post request
         model.addAttribute("vote", vote);
         if (StringUtils.isEmpty(voter)) {
@@ -72,7 +78,20 @@ public class VoteController {
 
         Cookie cookie = new Cookie("voter_id", voter);
         response.addCookie(cookie);
+        postToFunction(voter, vote);
+        return "index";
+    }
 
+    @PostMapping("/vote")
+    @ResponseStatus(HttpStatus.OK)
+    void postVote(@RequestBody Vote voteRequest)throws ParseException {
+        
+        String vote = voteRequest.getVote();
+        logger.info(String.format("vote received for '%s'!", vote));
+        postToFunction("api", vote);
+    }
+
+    void postToFunction(String voter, String vote) {
         String body = String.format("{\"voter\": \"%s\", \"vote\": \"%s\"}", voter, vote);
         RestTemplate rest = new RestTemplate();
 
@@ -82,8 +101,6 @@ public class VoteController {
         headers.setAll(headersMap);
         HttpEntity<String> requestEntity = new HttpEntity<String>(body, headers);
         rest.exchange(FUNCTION_URL, HttpMethod.POST, requestEntity, String.class);
-
-        return "index";
     }
 
     public static class Vote {
