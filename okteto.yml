@@ -41,6 +41,12 @@ destroy:
         sam delete --no-prompts --stack-name "${OKTETO_NAMESPACE}-voting-texkhnclxd" --region us-east-1
 
 external:
+  readme:
+    icon: graph
+    notes: README.md
+    endpoints:
+    - name: Try it out!
+      url: https://github.com/okteto/voting-app-with-external-resources
   lambda:
     icon: function
     notes: docs/lambda.md
@@ -51,6 +57,9 @@ external:
     notes: docs/atlas.md
     endpoints:
     - name: dashboard
+    - name: mongo
+      url: https://mongo.com
+  
       
 dev:
   vote:
