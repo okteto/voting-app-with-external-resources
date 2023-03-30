@@ -33,6 +33,14 @@ deploy:
     - name: deploy result service
       command: helm upgrade --install result result/chart --set image=${OKTETO_BUILD_RESULT_IMAGE} --set mongodb.username=${MONGODB_USERNAME} --set mongodb.password=${MONGODB_PASSWORD} --set mongodb.database=${OKTETO_NAMESPACE} --set mongodb.host=${MONGODB_HOST}
 
+    - name: deploy postman workspace
+      command: |
+        # api key PMAK-6412bd601a5d716cc0441bc9-32932815b86fea14a8bfca521a6282487d
+        # get workspace https://api.getpostman.com/workspaces/81c9a836-f1a2-43d8-9bb9-90bb88a10f62)
+        # create workspace https://api.getpostman.com/workspaces
+        # get collection https://api.getpostman.com/collections/15408036-bfcdad6b-bdba-4956-a9f0-eb3a3bf0d7d8
+        # create collection https://api.getpostman.com/collections?workspace={{workspaceIdNew}}
+
 destroy:
   image: okteto/pipeline-runner:1.0.0-sam
   commands:
