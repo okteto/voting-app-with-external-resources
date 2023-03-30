@@ -1,14 +1,14 @@
 # Deploy a Development Environment with Microservices, Lambda Functions, and MongoDB Atlas
 
-This is an example of how to configure and deploy a development environment that includes polyglot microservices, an AWS lambda function, and uses MongoDB Atlas for storage.
+This is an example of how to configure and deploy a development environment that includes polyglot microservices, an AWS Lambda function, and uses MongoDB Atlas for storage.
 
 ## Architecture
 
-![Architecture diagram](architecture.png)
+![Architecture diagram](https://raw.githubusercontent.com/okteto/voting-app-with-external-resources/main/docs/architecture.png)
 
-* A frontend web app in [Java](/vote) which lets you vote between Tacos and Burritos
-* A [Node.js](/result) webapp which shows the results of the voting in real time
-* A [Python-based AWS Lambda Function](/worker) worker which receives votes from /vote and stores them in a MongoDB Atlas instance
+* A frontend web app in [Java](https://github.com/okteto/voting-app-with-external-resources/tree/main/vote) which lets you vote between Tacos and Burritos
+* A [Node.js](https://github.com/okteto/voting-app-with-external-resources/tree/main/result) webapp which shows the results of the voting in real time
+* A [Python-based AWS Lambda Function](https://github.com/okteto/voting-app-with-external-resources/tree/main/worker) worker which receives votes from /vote and stores them in a MongoDB Atlas instance
 * A MongoDB Atlas cluster that stores everything
 
 
