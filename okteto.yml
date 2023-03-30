@@ -57,9 +57,6 @@ external:
     notes: docs/atlas.md
     endpoints:
     - name: dashboard
-    - name: mongo
-      url: https://mongo.com
-  
       
 dev:
   vote:
