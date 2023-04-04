@@ -42,18 +42,18 @@ destroy:
 
 external:
   readme:
-    icon: graph
+    icon: okteto
     notes: README.md
     endpoints:
     - name: Try it out!
       url: https://github.com/okteto/voting-app-with-external-resources
   lambda:
-    icon: function
+    icon: aws
     notes: docs/lambda.md
     endpoints:
     - name: function
   atlas:
-    icon: database
+    icon: mongodb
     notes: docs/atlas.md
     endpoints:
     - name: dashboard
